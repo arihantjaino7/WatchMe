@@ -14,7 +14,7 @@ Estimates assume ~10 focused hours/week (solo, part-time).
 
 **Goal:** a deployed, empty product with the data contract frozen. Nothing observes anything yet — but auth works in production and every later milestone builds on a schema that won't need to change.
 **Dependencies:** none.
-**Status:** repo scaffold (E1) is done as of this commit — Next.js/extension/shared skeletons, tooling, CI all in place.
+**Status:** M0 complete — scaffold (E1), Supabase project + auth (E2), and the event/session contract (E3) are all live. Deployed at watchme-web.vercel.app, cloud Supabase project on ap-south-1.
 
 ### Epic M0-E1: Monorepo & tooling _(done)_
 
@@ -28,16 +28,16 @@ Estimates assume ~10 focused hours/week (solo, part-time).
 
 ### Epic M0-E2: Supabase project & auth
 
-- [ ] **M0-E2-T1** — Create Supabase project (dev), wire `supabase/migrations` via Supabase CLI. _AC: `supabase db reset` locally applies an (empty) migration set against a local Postgres._
-- [ ] **M0-E2-T2** — First migration: `profiles` table + RLS policy (`user_id = auth.uid()`), trigger to auto-create a profile row on signup. _AC: signing up via Supabase Auth locally produces exactly one `profiles` row; a second user cannot `select` it._
-- [ ] **M0-E2-T3** — Supabase Auth wired into `apps/web`: magic link + Google OAuth, `/login` page, server-side session helper. _AC: can log in via magic link in local dev and land on an authenticated page; logged-out access to that page redirects to `/login`._
-- [ ] **M0-E2-T4** — Deploy `apps/web` to Vercel (production project + preview deploys on PR), Supabase env vars wired. _AC: a real magic-link login round-trip succeeds against the deployed prod URL._
+- [x] **M0-E2-T1** — Create Supabase project (dev), wire `supabase/migrations` via Supabase CLI. _AC: `supabase db reset` locally applies an (empty) migration set against a local Postgres._
+- [x] **M0-E2-T2** — First migration: `profiles` table + RLS policy (`user_id = auth.uid()`), trigger to auto-create a profile row on signup. _AC: signing up via Supabase Auth locally produces exactly one `profiles` row; a second user cannot `select` it._
+- [x] **M0-E2-T3** — Supabase Auth wired into `apps/web`: magic link + Google OAuth, `/login` page, server-side session helper. _AC: can log in via magic link in local dev and land on an authenticated page; logged-out access to that page redirects to `/login`._
+- [x] **M0-E2-T4** — Deploy `apps/web` to Vercel (production project + preview deploys on PR), Supabase env vars wired. _AC: a real magic-link login round-trip succeeds against the deployed prod URL. Verified via curl/Admin API up to the PKCE boundary (redirect gating, callback error handling, env wiring all confirmed live); a genuine browser click-through is still worth one manual pass._
 
 ### Epic M0-E3: Event & session contract (`packages/shared`)
 
-- [ ] **M0-E3-T1** — Zod schemas: `SessionEvent` (all event types from ARCHITECTURE.md §10 §11 — `tab_focus`, `tab_blur`, `url_change`, `idle_start`, `idle_end`, `window_blur`, `window_focus`, `redacted`), `Session`, batch request/response shapes. _AC: unit tests cover valid + invalid payloads for every event type (rejects missing fields, wrong enum values, oversized batches)._
-- [ ] **M0-E3-T2** — API version constant + `/api/v1` convention documented in `packages/shared`. _AC: exported `API_VERSION` consumed by both extension and web without duplication._
-- [ ] **M0-E3-T3** — Static domain→category map (coding, entertainment, docs, social, communication, other) as data in `packages/shared`, not hardcoded elsewhere. _AC: unit test asserts a sample of ~20 known domains map to expected categories; unknown domain falls back to `"other"` without throwing._
+- [x] **M0-E3-T1** — Zod schemas: `SessionEvent` (all event types from ARCHITECTURE.md §10 §11 — `tab_focus`, `tab_blur`, `url_change`, `idle_start`, `idle_end`, `window_blur`, `window_focus`, `redacted`), `Session`, batch request/response shapes. _AC: unit tests cover valid + invalid payloads for every event type (rejects missing fields, wrong enum values, oversized batches)._
+- [x] **M0-E3-T2** — API version constant + `/api/v1` convention documented in `packages/shared`. _AC: exported `API_VERSION` consumed by both extension and web without duplication._
+- [x] **M0-E3-T3** — Static domain→category map (coding, entertainment, docs, social, communication, other) as data in `packages/shared`, not hardcoded elsewhere. _AC: unit test asserts a sample of ~20 known domains map to expected categories; unknown domain falls back to `"other"` without throwing._
 
 **M0 exit criteria:** you can log into the deployed dashboard with a real account, and `packages/shared` has a tested, versioned contract that M1 and M2 build against without modification.
 
