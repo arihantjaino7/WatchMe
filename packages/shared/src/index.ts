@@ -7,9 +7,11 @@
  * - No runtime dependencies besides zod. No I/O, no framework imports.
  * - Breaking changes to event/session schemas require an API version bump,
  *   because shipped extensions cannot be force-updated.
- *
- * Populated in M0-E3 (contract definition). Until then this package only
- * proves the workspace wiring.
  */
 
-export const SHARED_CONTRACT_VERSION = 0;
+export const SHARED_CONTRACT_VERSION = 1;
+
+export * from "./api-version";
+export * from "./domain-category";
+export * from "./session-event";
+export * from "./session";

@@ -1,0 +1,392 @@
+:root {
+  /* Warm paper & ink — the product is a journal, not a dashboard. */
+  --paper: #f7f2e9;
+  --paper-raised: #fffdf8;
+  --ink: #211c16;
+  --ink-soft: #6b6156;
+  --ink-faint: #a99e90;
+  --ember: #d84f1e;
+  --ember-deep: #b03d12;
+  --line: #e3dacb;
+  --focus-ring: rgba(216, 79, 30, 0.35);
+
+  --font-display: var(--font-fraunces), "Georgia", serif;
+  --font-body: var(--font-karla), "Segoe UI", sans-serif;
+  --font-mono: var(--font-space-mono), "Consolas", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /* faint grain so large paper areas don't read as flat digital beige */
+  background-image: radial-gradient(rgba(33, 28, 22, 0.028) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+::selection {
+  background: var(--ember);
+  color: var(--paper-raised);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 560;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+a {
+  color: var(--ember-deep);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ---------- shared primitives ---------- */
+
+.wm-wordmark {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 640;
+  letter-spacing: -0.01em;
+}
+
+.wm-wordmark .dot {
+  color: var(--ember);
+}
+
+.wm-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+}
+
+.wm-btn {
+  appearance: none;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper-raised);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.72rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
+}
+
+.wm-btn:hover {
+  background: var(--ember-deep);
+  border-color: var(--ember-deep);
+  transform: translateY(-1px);
+}
+
+.wm-btn:active {
+  transform: translateY(0);
+}
+
+.wm-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+}
+
+.wm-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+}
+
+.wm-btn--ghost:hover {
+  background: var(--ink);
+  color: var(--paper-raised);
+  border-color: var(--ink);
+}
+
+.wm-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.72rem 1rem;
+  border-radius: 10px;
+  outline: none;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.wm-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.wm-input:focus {
+  border-color: var(--ember);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* staggered page-load reveal */
+@keyframes wm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wm-rise {
+  animation: wm-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.wm-rise-2 {
+  animation-delay: 90ms;
+}
+
+.wm-rise-3 {
+  animation-delay: 180ms;
+}
+
+.wm-rise-4 {
+  animation-delay: 270ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-rise,
+  .wm-rise-2,
+  .wm-rise-3,
+  .wm-rise-4 {
+    animation: none;
+  }
+}
+
+/* ---------- login ---------- */
+
+.login-page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+
+@media (max-width: 860px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+  .login-hero {
+    display: none;
+  }
+}
+
+.login-hero {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.login-hero::after {
+  /* ember horizon line across the dark panel */
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 22%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ember) 30%, var(--ember) 70%, transparent);
+  box-shadow: 0 0 42px 6px rgba(216, 79, 30, 0.45);
+}
+
+.login-hero h1 {
+  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  max-width: 12ch;
+}
+
+.login-hero h1 em {
+  font-style: italic;
+  color: var(--ember);
+}
+
+.login-hero .wm-kicker {
+  color: var(--ink-faint);
+}
+
+.login-hero-foot {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  max-width: 34ch;
+  line-height: 1.7;
+}
+
+.login-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.login-card h2 {
+  font-size: 1.9rem;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.login-sent {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ember);
+  background: var(--paper-raised);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+}
+
+.login-error {
+  color: var(--ember-deep);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* ---------- app shell (authed) ---------- */
+
+.shell-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 2rem;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper-raised) 72%, transparent);
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.shell-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.shell-main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 5rem;
+}
+
+.shell-main > h1 {
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  margin-bottom: 0.4rem;
+}
+
+.shell-sub {
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 0 2.6rem;
+}
+
+.empty-session-card {
+  border: 1px dashed var(--ink-faint);
+  border-radius: 14px;
+  background: var(--paper-raised);
+  padding: 2.6rem 2.2rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.empty-session-card h2 {
+  font-size: 1.45rem;
+}
+
+.empty-session-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  max-width: 56ch;
+}
+
+.empty-session-steps {
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+  counter-reset: step;
+}
+
+.empty-session-steps li {
+  counter-increment: step;
+  display: flex;
+  gap: 0.85rem;
+  align-items: baseline;
+  color: var(--ink);
+}
+
+.empty-session-steps li::before {
+  content: "0" counter(step);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ember);
+}
+
+.shell-footnote {
+  margin-top: 2.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+}
