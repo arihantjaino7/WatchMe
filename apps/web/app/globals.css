@@ -384,6 +384,49 @@ a {
   color: var(--ember);
 }
 
+/* ---------- connect-extension ---------- */
+
+.connect-card {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ember);
+  border-radius: 14px;
+  background: var(--paper-raised);
+  padding: 2rem 2.2rem;
+  display: grid;
+  gap: 0.9rem;
+  justify-items: start;
+  max-width: 480px;
+}
+
+.connect-card-lead {
+  margin: 0;
+  color: var(--ink-soft);
+  max-width: 40ch;
+}
+
+.connect-code {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  padding: 0.35rem 0;
+  user-select: all;
+}
+
+.connect-code--expired {
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--ember);
+  text-decoration-thickness: 2px;
+}
+
+.connect-card-meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
 .shell-footnote {
   margin-top: 2.4rem;
   font-family: var(--font-mono);

@@ -13,5 +13,6 @@ export const SHARED_CONTRACT_VERSION = 1;
 
 export * from "./api-version";
 export * from "./domain-category";
+export * from "./extension-auth";
 export * from "./session-event";
 export * from "./session";

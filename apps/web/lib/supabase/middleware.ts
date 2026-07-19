@@ -11,6 +11,13 @@ const PUBLIC_PATHS = ["/login", "/auth/callback"];
  * decided whether the request continues.
  */
 export async function updateSession(request: NextRequest) {
+  // /api/v1 routes authenticate themselves via Bearer tokens (the extension
+  // has no cookies). Redirecting an API caller to /login would be nonsense,
+  // and there is no cookie session here to refresh -- skip entirely.
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
