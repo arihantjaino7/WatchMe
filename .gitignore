@@ -17,6 +17,9 @@ out/
 supabase/.temp/
 supabase/.branches/
 
+# vercel
+.vercel
+
 # misc
 .DS_Store
 *.log
