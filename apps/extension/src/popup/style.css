@@ -1,0 +1,211 @@
+/*
+ * Popup styling mirrors the web app's paper-journal aesthetic (warm paper,
+ * ink, ember accent) but uses system font stacks -- MV3's default CSP blocks
+ * remote font fetches, and bundling Fraunces/Karla just for a 300px popup
+ * isn't worth the weight.
+ */
+
+:root {
+  --paper: #f7f2e9;
+  --paper-raised: #fffdf8;
+  --ink: #211c16;
+  --ink-soft: #6b6156;
+  --ink-faint: #a99e90;
+  --ember: #d84f1e;
+  --ember-deep: #b03d12;
+  --line: #e3dacb;
+
+  --font-display: Georgia, "Iowan Old Style", serif;
+  --font-body: -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 300px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+#app {
+  padding: 1.1rem 1.2rem 1.3rem;
+}
+
+.wm-loading {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.wm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.wm-wordmark {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.wm-wordmark .dot {
+  color: var(--ember);
+}
+
+.wm-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+
+.wm-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.wm-badge--live {
+  color: var(--paper-raised);
+  background: var(--ember);
+  border-color: var(--ember);
+}
+
+.wm-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.05rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.wm-lead {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.wm-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  outline: none;
+}
+
+.wm-input:focus {
+  border-color: var(--ember);
+}
+
+.wm-code-input {
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.wm-btn {
+  appearance: none;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper-raised);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.wm-btn:hover {
+  background: var(--ember-deep);
+  border-color: var(--ember-deep);
+}
+
+.wm-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.wm-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+}
+
+.wm-btn--ghost:hover {
+  background: var(--ink);
+  color: var(--paper-raised);
+}
+
+.wm-btn--danger {
+  background: transparent;
+  color: var(--ember-deep);
+  border-color: var(--line);
+}
+
+.wm-btn--danger:hover {
+  background: var(--ember-deep);
+  color: var(--paper-raised);
+  border-color: var(--ember-deep);
+}
+
+.wm-elapsed {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.wm-intent {
+  margin: 0;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
+.wm-error {
+  margin: 0;
+  color: var(--ember-deep);
+  font-size: 0.78rem;
+}
+
+.wm-footnote {
+  margin-top: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  line-height: 1.6;
+}
+
+.wm-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}

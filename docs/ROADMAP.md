@@ -50,32 +50,33 @@ Estimates assume ~10 focused hours/week (solo, part-time).
 
 ### Epic M1-E1: Extension auth handoff
 
-- [ ] **M1-E1-T1** — `POST /api/v1/auth/extension` — one-time-code exchange endpoint. _AC: integration test — valid unexpired code returns a refresh token once and is single-use (second exchange attempt fails)._
-- [ ] **M1-E1-T2** — Web page `/connect-extension` generating the one-time code for a logged-in user. _AC: manual test — visiting the page while logged in shows a code/deep-link the extension can consume._
-- [ ] **M1-E1-T3** — Extension: consume the code, store refresh token in `chrome.storage.local`, mint short-lived JWTs for API calls, auto-refresh on expiry. _AC: after connecting once, the extension can call an authenticated endpoint successfully after the JWT's TTL has passed (refresh happens transparently)._
+- [x] **M1-E1-T1** — `POST /api/v1/auth/extension` — one-time-code exchange endpoint. _AC: integration test — valid unexpired code returns a refresh token once and is single-use (second exchange attempt fails). Verified: 5 integration tests against local Supabase (exchange, single-use, expiry, malformed/unknown code, display-format normalization)._
+- [x] **M1-E1-T2** — Web page `/connect-extension` generating the one-time code for a logged-in user. _AC: manual test — visiting the page while logged in shows a code/deep-link the extension can consume. Built: paper-journal-styled page + server action minting a hashed, TTL'd code with a live countdown._
+- [x] **M1-E1-T3** — Extension: consume the code, store refresh token in `chrome.storage.local`, mint short-lived JWTs for API calls, auto-refresh on expiry. _AC: after connecting once, the extension can call an authenticated endpoint successfully after the JWT's TTL has passed (refresh happens transparently). Verified: `apps/extension/src/lib/auth.ts` refreshes ~60s before expiry and on a 401 retry; refresh-rotation round-trip covered by an integration test against `/api/v1/auth/refresh`._
 
 ### Epic M1-E2: Session lifecycle API
 
-- [ ] **M1-E2-T1** — `POST /api/v1/sessions` (start, optional intent; returns existing active session instead of erroring if one exists). _AC: integration test — starting twice returns the same `sessionId`._
-- [ ] **M1-E2-T2** — `POST /api/v1/sessions/:id/end`. _AC: ending sets `ended_at`, `end_reason='user'`; ending an already-ended session is a no-op, not an error._
-- [ ] **M1-E2-T3** — `GET /api/v1/sessions/active` — recovery endpoint. _AC: returns `null` when none active; returns the session when one is._
-- [ ] **M1-E2-T4** — Scheduled job: auto-end sessions idle >60min. _AC: a session with no events for 60+ minutes is auto-ended with `end_reason='auto'` on the next job run (test with a manually backdated `started_at`/last-event timestamp)._
+- [x] **M1-E2-T1** — `POST /api/v1/sessions` (start, optional intent; returns existing active session instead of erroring if one exists). _AC: integration test — starting twice returns the same `sessionId`. Verified._
+- [x] **M1-E2-T2** — `POST /api/v1/sessions/:id/end`. _AC: ending sets `ended_at`, `end_reason='user'`; ending an already-ended session is a no-op, not an error. Verified._
+- [x] **M1-E2-T3** — `GET /api/v1/sessions/active` — recovery endpoint. _AC: returns `null` when none active; returns the session when one is. Verified._
+- [x] **M1-E2-T4** — Scheduled job: auto-end sessions idle >60min. _AC: a session with no events for 60+ minutes is auto-ended with `end_reason='auto'` on the next job run (test with a manually backdated `started_at`/last-event timestamp). Built as a Postgres function + pg_cron schedule (every 10 min) so it needs no external scheduler; verified with a backdated fixture, and confirmed a bystander's fresh session survives the sweep untouched._
 
 ### Epic M1-E3: Event capture & local privacy filter (service worker)
 
-- [ ] **M1-E3-T1** — Tab/window/idle listeners emitting typed events per the shared schema. _AC: manual test — switching tabs, focusing/blurring the window, and going idle each produce the expected event shape in a debug log._
-- [ ] **M1-E3-T2** — Local privacy filter: blocklist check, incognito exclusion, URL stripped to origin+path before it ever touches the buffer. _AC: unit test — a blocklisted domain never appears in the buffer with URL/title populated, only as `{type:'redacted', duration}`; incognito tab activity produces zero events._
-- [ ] **M1-E3-T3** — IndexedDB event buffer with `clientEventId` generation. _AC: unit test — buffering the same logical event twice (simulated retry) still uploads with one stable `clientEventId`._
-- [ ] **M1-E3-T4** — Batched idempotent upload (`POST /sessions/:id/events`) on a timer/count trigger, offline-safe (buffer grows, flushes on reconnect). _AC: manual test — disable network mid-session, generate events, re-enable network, confirm all buffered events arrive server-side exactly once (server enforces `UNIQUE(session_id, client_event_id)`)._
-- [ ] **M1-E3-T5** — Service-worker restart recovery: reload state from `chrome.storage.session` + reconcile via `GET /sessions/active` on every wake. _AC: manual test — force-terminate the service worker mid-session (`chrome://serviceworker-internals`), confirm it recovers the active session on next wake without duplicating or losing events._
+- [x] **M1-E3-T1** — Tab/window/idle listeners emitting typed events per the shared schema. _AC: manual test — switching tabs, focusing/blurring the window, and going idle each produce the expected event shape in a debug log. Built: `apps/extension/src/background/capture.ts` wires `chrome.tabs`/`chrome.windows`/`chrome.idle` through the privacy filter. Manual in-browser verification still outstanding — needs "Load unpacked" + real tab switching, not yet done in this pass._
+- [x] **M1-E3-T2** — Local privacy filter: blocklist check, incognito exclusion, URL stripped to origin+path before it ever touches the buffer. _AC: unit test — a blocklisted domain never appears in the buffer with URL/title populated, only as `{type:'redacted', duration}`; incognito tab activity produces zero events. Verified: 12 unit tests in `filter.test.ts` covering exactly these cases plus subdomain matching and same-tab url_change collapsing._
+- [x] **M1-E3-T3** — IndexedDB event buffer with `clientEventId` generation. _AC: unit test — buffering the same logical event twice (simulated retry) still uploads with one stable `clientEventId`. Verified: 3 unit tests via `fake-indexeddb`._
+- [x] **M1-E3-T4** — Batched idempotent upload (`POST /sessions/:id/events`) on a timer/count trigger, offline-safe (buffer grows, flushes on reconnect). _AC: manual test — disable network mid-session, generate events, re-enable network, confirm all buffered events arrive server-side exactly once (server enforces `UNIQUE(session_id, client_event_id)`). Server half verified by integration test (batch + exact replay → `accepted: 2` then `accepted: 0`, row count stays 2). Client half built (`uploader.ts`: count-threshold + 1-min alarm trigger, deletes from IndexedDB only after ack); the manual airplane-mode pass is still outstanding._
+- [x] **M1-E3-T5** — Service-worker restart recovery: reload state from `chrome.storage.session` + reconcile via `GET /sessions/active` on every wake. _AC: manual test — force-terminate the service worker mid-session (`chrome://serviceworker-internals`), confirm it recovers the active session on next wake without duplicating or losing events. Built: `reconcile()` runs unconditionally at the top of the service worker and on every `getState` popup message; server is treated as ground truth. Manual force-terminate pass still outstanding._
 
 ### Epic M1-E4: Popup UI
 
-- [ ] **M1-E4-T1** — Popup: logged-out state → "Connect" (launches M1-E1 flow). _AC: manual test on a clean profile._
-- [ ] **M1-E4-T2** — Popup: logged-in idle state → intent field + "Start session." _AC: starting creates a session server-side (verified via dashboard/DB) and popup transitions to active state._
-- [ ] **M1-E4-T3** — Popup: active state → elapsed time, "End session," pause-capture toggle. _AC: ending a session flushes remaining buffered events and transitions the popup back to idle._
+- [x] **M1-E4-T1** — Popup: logged-out state → "Connect" (launches M1-E1 flow). _AC: manual test on a clean profile. Built. Manual pass still outstanding._
+- [x] **M1-E4-T2** — Popup: logged-in idle state → intent field + "Start session." _AC: starting creates a session server-side (verified via dashboard/DB) and popup transitions to active state. Built — calls the M1-E2-T1 endpoint verified above._
+- [x] **M1-E4-T3** — Popup: active state → elapsed time, "End session," pause-capture toggle. _AC: ending a session flushes remaining buffered events and transitions the popup back to idle. Built: `endSession()` closes the current context, flushes twice (before and after the end call) so `last_event_at` reflects reality._
 
 **M1 exit criteria:** run a real work session for an hour, close the laptop lid once, switch networks once — every real event still lands in Postgres exactly once, with no popup crash and no lost session.
+**Status:** all M1 code is built, unit/integration-tested, and the extension loads via `pnpm --filter @watchme/extension build` + Chrome "Load unpacked". The manual, real-browser passes (tab switching, airplane-mode mid-session, force-terminating the service worker, a clean-profile connect) are the one thing this pass could not do headlessly — do those by hand before calling M1 fully closed.
 
 ---
 

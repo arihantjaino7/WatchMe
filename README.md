@@ -53,6 +53,10 @@ pnpm build        # production builds
 pnpm typecheck    # tsc across all workspaces
 pnpm lint         # eslint
 pnpm format       # prettier --write
+pnpm test         # unit tests (no external services needed)
+
+pnpm exec supabase start        # local Supabase (Docker) — required for the next line
+pnpm test:integration            # /api/v1 route tests against the LOCAL database only
 ```
 
 - **Dashboard:** `pnpm --filter @watchme/web dev` → http://localhost:3000
