@@ -38,3 +38,9 @@ export const ActiveSessionResponseSchema = z.object({
   session: SessionSchema.nullable(),
 });
 export type ActiveSessionResponse = z.infer<typeof ActiveSessionResponseSchema>;
+
+/** Returned by POST /sessions/:id/end -- also for the no-op "already ended" case. */
+export const EndSessionResponseSchema = z.object({
+  session: SessionSchema,
+});
+export type EndSessionResponse = z.infer<typeof EndSessionResponseSchema>;
