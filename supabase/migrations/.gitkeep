@@ -1,0 +1,1 @@
+# Migrations land in M0-E2 via `supabase migration new`. Never hand-edit prod schema.

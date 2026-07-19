@@ -1,0 +1,15 @@
+/**
+ * @watchme/shared — the single source of truth for every contract that crosses
+ * a boundary in WatchMe: extension <-> API, API <-> database, pipeline <-> dashboard.
+ *
+ * Rules for this package:
+ * - Zod schemas first, TypeScript types derived from them (z.infer).
+ * - No runtime dependencies besides zod. No I/O, no framework imports.
+ * - Breaking changes to event/session schemas require an API version bump,
+ *   because shipped extensions cannot be force-updated.
+ *
+ * Populated in M0-E3 (contract definition). Until then this package only
+ * proves the workspace wiring.
+ */
+
+export const SHARED_CONTRACT_VERSION = 0;
