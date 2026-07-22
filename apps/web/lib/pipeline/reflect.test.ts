@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { COMPILER_VERSION, type CompiledTimeline } from "@watchme/shared";
+import {
+  COMPILER_VERSION,
+  type ActivityInterpretation,
+  type CompiledTimeline,
+} from "@watchme/shared";
 import type { LlmGenerateResult, LlmProvider } from "../llm/provider";
 import { generateReflection } from "./reflect";
 
@@ -32,6 +36,23 @@ function timeline(): CompiledTimeline {
   };
 }
 
+function interpretation(): ActivityInterpretation {
+  return {
+    episodes: [
+      {
+        label: "Reviewing a GitHub issue",
+        category: "coding",
+        blockIndices: [0],
+        confidence: 0.8,
+        relevanceToIntent: "aligned",
+        isDistraction: false,
+        evidenceNote: "30 minutes on github.com viewing the Issue thread.",
+      },
+    ],
+    uncertaintyNote: null,
+  };
+}
+
 const VALID_REFLECTION = JSON.stringify({
   narrative: "A focused coding session, mostly on github.com with a short idle break.",
   productivity: { label: "high", score: 80, assessment: "Sustained focus on coding." },
@@ -61,7 +82,9 @@ function fakeProvider(text: string) {
 describe("generateReflection", () => {
   it("returns a schema-validated reflection from the model output", async () => {
     const provider = fakeProvider(VALID_REFLECTION);
-    const result = await generateReflection(timeline(), "Ship the auth fix", { provider });
+    const result = await generateReflection(timeline(), interpretation(), "Ship the auth fix", {
+      provider,
+    });
 
     expect(provider.calls).toBe(1);
     expect(result.model).toBe("gemini-2.0-flash");
@@ -77,7 +100,7 @@ describe("generateReflection", () => {
       JSON.stringify({ ...JSON.parse(VALID_REFLECTION), suggestions: ["a", "b", "c", "d"] }),
     );
     await expect(
-      generateReflection(timeline(), "Ship the auth fix", { provider }),
+      generateReflection(timeline(), interpretation(), "Ship the auth fix", { provider }),
     ).rejects.toMatchObject({ kind: "invalid_output" });
   });
 });
