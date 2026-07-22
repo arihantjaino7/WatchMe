@@ -14,7 +14,7 @@ export default defineConfig({
     alias: { "@": root },
   },
   test: {
-    include: ["lib/**/*.test.ts"],
+    include: ["lib/**/*.test.ts", "evals/**/*.test.ts"],
     exclude: ["node_modules", "tests/integration/**"],
   },
 });
