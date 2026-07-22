@@ -3,6 +3,7 @@ import type { EndSessionResponse } from "@watchme/shared";
 import { authenticateRequest } from "@/lib/api/request-auth";
 import { jsonError, unauthorized } from "@/lib/api/responses";
 import { SESSION_COLUMNS, sessionFromRow, type SessionRow } from "@/lib/api/session-row";
+import { inngest } from "@/lib/inngest/client";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -27,6 +28,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     .maybeSingle<SessionRow>();
 
   if (ended) {
+    // Enqueue the durable analysis pipeline. Best-effort: a failed enqueue must
+    // never turn a successful end into an error for the extension (the session
+    // stays `pending` and can be re-analyzed).
+    try {
+      await inngest.send({ name: "session/analyze", data: { sessionId: id } });
+    } catch {
+      // Swallow: analysis can be retriggered; ending the session already succeeded.
+    }
     return NextResponse.json({ session: sessionFromRow(ended) } satisfies EndSessionResponse);
   }
 
