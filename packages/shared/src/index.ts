@@ -11,8 +11,11 @@
 
 export const SHARED_CONTRACT_VERSION = 1;
 
+export * from "./activity-interpretation";
 export * from "./api-version";
+export * from "./compiled-timeline";
 export * from "./domain-category";
 export * from "./extension-auth";
+export * from "./reflection";
 export * from "./session-event";
 export * from "./session";

@@ -9,7 +9,8 @@ export type SessionRow = {
   ended_at: string | null;
   end_reason: Session["endReason"];
   analysis_status: Session["analysisStatus"];
-  stats: Record<string, unknown> | null;
+  // jsonb: the compiler writes a CompiledTimeline; null until analysis runs.
+  stats: Session["stats"];
 };
 
 /**
